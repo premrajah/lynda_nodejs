@@ -25,7 +25,7 @@
     <div class="jumbotron">
       <h1 class="display-4">Send Message</h1>
       <br>
-      <div class="err-msg alert alert-warning" style="display:none">Enter a name</div>
+      <div class="err-msg alert alert-warning" style="display:none">Enter a name and message</div>
       <input id="name"  type="text" class="form-control" placeholder="Name">
       <br>
       <textarea id="message"  type="text" class="form-control" placeholder="Message"></textarea>
@@ -53,7 +53,7 @@
           message: $('#message').val()
         }
 
-        if($('#name').val() != ""){
+        if($('#name').val() != "" && $('#message').val() != ""){
           postMessages(message)
           
           // ignore not relavent

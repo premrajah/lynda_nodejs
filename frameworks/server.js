@@ -37,33 +37,44 @@ app.get('/messages', (req, res) => {
 })
 
 // post request
-app.post('/messages', (req, res) => {
-  var message = new Message(req.body)
+app.post('/messages', async (req, res) => {
 
-  // for mongodb (mongoose)
-  message.save()
-  .then(() => {
-    
-   console.log('Saved')
-   return  Message.findOne({message: 'badword'}) // promise
+  try {
 
-  })
-  .then( censored => {
+    var message = new Message(req.body)
 
-    if(censored){
-      console.log('Censored words found', censored)
-      return Message.remove({_id: censored.id})
-    }
+    // for mongodb (mongoose) / async - await
+    var savedMessage = await message.save()
 
-    io.emit('message', req.body)
+    console.log('Saved')
+
+    var censored = await Message.findOne({
+      message: 'badword'
+    })
+
+    if (censored)
+      await Message.remove({
+        _id: censored.id
+      })
+    else
+      io.emit('message', req.body)
+
+
     res.sendStatus(200)
 
-  })
-  .catch((err) => {
+  } catch (error) {
 
-    res.sendStatus(500)
-    return console.error(err)
-  })
+      res.sendStatus(500)
+      return console.error(error)
+
+  } finally {
+
+    console.log("from Finally in Post")
+  }
+
+
+
+
 
 })
 
