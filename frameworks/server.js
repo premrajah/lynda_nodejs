@@ -18,6 +18,8 @@ app.use(bodyParser.urlencoded({
   extended: false
 }))
 
+//let mongoose use default ES6 promise lib
+mongoose.Promise = Promise
 var dbUrl = 'mongodb://zinox:xoniz@ds229418.mlab.com:29418/learning-node101'
 
 var Message = mongoose.model('Message', {
@@ -37,15 +39,37 @@ app.get('/messages', (req, res) => {
 // post request
 app.post('/messages', (req, res) => {
   var message = new Message(req.body)
+
   // for mongodb (mongoose)
-  message.save((err) => {
-    if (err)
-      sendStatus(500)
+  message.save()
+  .then(() => {
+    
+   console.log('Saved')
+   return  Message.findOne({message: 'badword'}) // promise
+
+  })
+  .then( censored => {
+
+    if(censored){
+      console.log('Censored words found', censored)
+      return Message.remove({_id: censored.id})
+    }
+
     io.emit('message', req.body)
     res.sendStatus(200)
+
+  })
+  .catch((err) => {
+
+    res.sendStatus(500)
+    return console.error(err)
   })
 
 })
+
+
+
+
 
 io.on('connection', (socket) => {
   console.log("A user connected")

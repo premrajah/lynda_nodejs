@@ -25,6 +25,7 @@
     <div class="jumbotron">
       <h1 class="display-4">Send Message</h1>
       <br>
+      <div class="err-msg alert alert-warning" style="display:none">Enter a name</div>
       <input id="name"  type="text" class="form-control" placeholder="Name">
       <br>
       <textarea id="message"  type="text" class="form-control" placeholder="Message"></textarea>
@@ -32,6 +33,8 @@
       <button class="btn btn-success" id="send">Send</button>
     </div>
 
+    <button type="button" id="clear" class="btn btn-primary btn-sm float-right">Clear All</button>
+    <br>
     <div id="messages"></div>
   </div>
 
@@ -44,12 +47,25 @@
     $(() => {
 
       $('#send').click(() => {
+
         var message = {
           name: $('#name').val(),
           message: $('#message').val()
         }
 
-        postMessages(message)
+        if($('#name').val() != ""){
+          postMessages(message)
+          
+          // ignore not relavent
+          $('.err-msg').css('display', 'none');
+          $('#name').val("")
+          $('#message').val("")
+
+        } else {
+          // ignore not relevant
+          $('.err-msg').css('display', 'block');
+        }
+        
       })
 
       getMessages()
@@ -77,6 +93,8 @@
       // get requests
       $.post('http://localhost:3000/messages', message)
      }
+
+     
      
     
   </script>
