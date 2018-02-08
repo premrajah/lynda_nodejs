@@ -15,6 +15,8 @@
     crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
     crossorigin="anonymous"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
 </head>
 
 <body>
@@ -33,7 +35,11 @@
     <div id="messages"></div>
   </div>
 
+
   <script>
+
+    var socket = io()
+
     //document ready
     $(() => {
 
@@ -51,7 +57,9 @@
     })
     // end document ready
 
-    function AddMessages(message) {
+    socket.on('message', addMessages)
+
+    function addMessages(message) {
       $('#messages').append(`<h4> ${message.name} </h4> <p> ${message.message} </p>`)
     }
 
@@ -60,7 +68,7 @@
       $.get('http://localhost:3000/messages', (data) => {
 
         // optimized because the messag siginiture match each other
-        data.forEach(AddMessages);
+        data.forEach(addMessages);
 
       })
     }

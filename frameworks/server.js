@@ -1,6 +1,11 @@
 var express = require('express')
 var bodyParser = require('body-parser')
 var app = express()
+// http server
+var http = require('http').Server(app)
+// setup in backend
+var io = require('socket.io')(http)
+
 
 // serving pages
 app.use(express.static(__dirname))
@@ -31,9 +36,14 @@ app.post('/messages', (req, res) => {
   //  check what data in the body
   // console.log(res.body)
   messages.push(req.body)
+  io.emit('message', req.body)
   res.sendStatus(200)
 })
 
-var server = app.listen(3000, () => {
+io.on('connection', (socket) => {
+  console.log("A user connected")
+})
+
+var server = http.listen(3000, () => {
   console.log('Server is listening to port, localhost:', server.address().port)
 })
