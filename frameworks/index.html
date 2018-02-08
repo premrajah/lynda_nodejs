@@ -10,8 +10,7 @@
     crossorigin="anonymous">
   <link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.min.css">
 
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-    crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
     crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
@@ -24,7 +23,9 @@
     <div class="jumbotron">
       <h1 class="display-4">Send Message</h1>
       <br>
-      <input type="text" class="form-control" placeholder="Name">
+      <input id="name"  type="text" class="form-control" placeholder="Name">
+      <br>
+      <textarea id="message"  type="text" class="form-control" placeholder="Message"></textarea>
       <br>
       <button class="btn btn-success" id="send">Send</button>
     </div>
@@ -32,23 +33,44 @@
     <div id="messages"></div>
   </div>
 
-
-
   <script>
     //document ready
     $(() => {
+
       $('#send').click(() => {
-        AddMessages({
-          name: 'Tim',
-          message: 'Hello'
-        })
+        var message = {
+          name: $('#name').val(),
+          message: $('#message').val()
+        }
+
+        postMessages(message)
       })
 
+      getMessages()
+
     })
+    // end document ready
 
     function AddMessages(message) {
       $('#messages').append(`<h4> ${message.name} </h4> <p> ${message.message} </p>`)
     }
+
+    function getMessages() {
+      // get requests
+      $.get('http://localhost:3000/messages', (data) => {
+
+        // optimized because the messag siginiture match each other
+        data.forEach(AddMessages);
+
+      })
+    }
+
+     function postMessages(message) {
+      // get requests
+      $.post('http://localhost:3000/messages', message)
+     }
+     
+    
   </script>
 </body>
 
